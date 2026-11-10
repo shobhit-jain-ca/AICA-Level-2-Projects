@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="pagehead"><div><h1>Upload Data</h1><div class="sub">Upload the monthly Excel file. You will see a checked preview before anything is saved.</div></div></div>
+
+<div class="grid cols-2" style="margin-bottom:16px">
+  <div class="card">
+    <h2>Step 1 – Get the template</h2>
+    <p class="muted" style="margin-top:0">The template has dropdowns for Entity, Investment Type, Bank and Fund taken from <a href="{{ url_for('masters_page') }}">Masters</a>. Fill one row per account / investment, and enter the <b>As-On Date</b> in cell B2.</p>
+    <a class="btn secondary" href="{{ url_for('download_template') }}">⬇ Download blank template</a>
+  </div>
+  <div class="card">
+    <h2>Step 2 – Upload the filled file</h2>
+    <form method="post" action="{{ url_for('uploads_parse') }}" enctype="multipart/form-data">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <div class="dropzone"><input type="file" name="file" accept=".xlsx,.xlsm" required>
+        <p class="muted small" style="margin:8px 0 0">.xlsx only · max 15 MB</p></div>
+      <button class="btn" style="margin-top:12px" type="submit">Check file →</button>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Upload history</h2>
+  {% if ups %}
+  <div class="tablewrap"><table class="t">
+    <thead><tr><th>As-on date</th><th class="r">Holdings</th><th class="r">Total value (₹)</th><th>Date in file</th><th>Uploaded on</th><th>By</th><th>File</th><th></th></tr></thead>
+    <tbody>
+    {% for u in ups %}
+      <tr><td class="nowrap"><b>{{ u['as_on_date']|dmy }}</b></td><td class="num">{{ u['row_count'] }}</td><td class="num">{{ u['total_value']|inr(0) }}</td>
+      <td class="nowrap">{{ u['prepared_on']|dmy }}</td><td class="nowrap">{{ u['uploaded_at']|dmytime }}</td><td>{{ u['uploaded_by'] }}</td>
+      <td><a href="{{ url_for('uploads_file', uid=u['id']) }}">{{ u['filename'] }}</a></td>
+      <td><form method="post" action="{{ url_for('uploads_delete', uid=u['id']) }}" class="js-confirm" data-msg="Delete all data for {{ u['as_on_date']|dmy }}? A backup copy is taken first.">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button class="btn danger sm" type="submit">Delete</button></form></td></tr>
+    {% endfor %}
+    </tbody></table></div>
+  {% else %}<p class="muted">Nothing uploaded yet.</p>{% endif %}
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/forms.js') }}?v={{ app_version }}"></script>{% endblock %}

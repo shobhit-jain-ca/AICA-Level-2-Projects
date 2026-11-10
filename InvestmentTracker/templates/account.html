@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="pagehead"><div><h1>My Account</h1><div class="sub">Signed in as <b>{{ user['username'] }}</b> ({{ 'Administrator' if user['role']=='admin' else 'Viewer' }})</div></div></div>
+<div class="card" style="max-width:460px">
+  <h2>Change password</h2>
+  <form method="post">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <div class="field" style="margin-bottom:12px"><label>Current password</label><input type="password" name="old" autocomplete="current-password" required></div>
+    <div class="field" style="margin-bottom:12px"><label>New password (min 8 characters)</label><input type="password" name="new" autocomplete="new-password" required minlength="8"></div>
+    <div class="field" style="margin-bottom:16px"><label>Repeat new password</label><input type="password" name="new2" autocomplete="new-password" required minlength="8"></div>
+    <button class="btn" type="submit">Update password</button>
+  </form>
+</div>
+{% endblock %}

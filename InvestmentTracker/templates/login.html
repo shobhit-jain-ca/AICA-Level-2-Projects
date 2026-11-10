@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1f4fa8">
+<title>Sign in – {{ settings.get('app_title','Investment Tracker') }}</title>
+<link rel="manifest" href="{{ url_for('manifest') }}">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/icon-192.png') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}?v={{ app_version }}">
+</head>
+<body>
+<div class="loginwrap">
+  <div class="logincard">
+    <img class="logo" src="{{ url_for('static', filename='img/logo.svg') }}" alt="">
+    <h1>{{ settings.get('app_title','Investment Tracker') }}</h1>
+    <div class="muted">{{ settings.get('client_name','') }}</div>
+    {% with msgs = get_flashed_messages(with_categories=true) %}
+      {% for cat, m in msgs %}<div class="flash {{ cat }}" style="margin-top:14px">{{ m }}</div>{% endfor %}
+    {% endwith %}
+    {% if no_users %}
+      <div class="flash warn" style="margin-top:14px">No user accounts exist yet. On the server, run <b>setup_admin.bat</b> (or <code>python run_server.py --create-admin</code>) to create the first administrator.</div>
+    {% else %}
+    <form method="post" autocomplete="on">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <div class="row"><label for="u">Username</label><input id="u" name="username" type="text" autocomplete="username" autocapitalize="none" required autofocus></div>
+      <div class="row"><label for="p">Password</label><input id="p" name="password" type="password" autocomplete="current-password" required></div>
+      <button class="btn" style="width:100%;margin-top:6px" type="submit">Sign in</button>
+    </form>
+    {% endif %}
+    <p class="muted small" style="margin:18px 0 0;text-align:center">Confidential – authorised users only</p>
+  </div>
+</div>
+</body>
+</html>

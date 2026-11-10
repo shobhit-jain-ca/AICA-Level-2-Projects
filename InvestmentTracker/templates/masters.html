@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="pagehead"><div><h1>Masters</h1><div class="sub">Maintain the lists used in the Excel template and in reports.</div></div></div>
+<div class="tabs" id="tabs">
+  <button data-k="entities" class="active">Entities</button>
+  <button data-k="banks">Banks / Institutions</button>
+  <button data-k="funds">Funds / Securities</button>
+  <button data-k="types">Investment Types</button>
+  <button data-k="groups">Investment Groups</button>
+  <button data-k="users">Users</button>
+  <button data-k="settings">Settings &amp; Backup</button>
+</div>
+<div id="pane"></div>
+
+<div class="modal-bg" id="modalBg"><div class="modal" role="dialog" aria-modal="true">
+  <h2 id="mTitle"></h2><div id="mFields"></div><div class="err-text" id="mErr"></div>
+  <div class="actions"><button class="btn secondary" id="mCancel" type="button">Cancel</button><button class="btn" id="mSave" type="button">Save</button></div>
+</div></div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/masters.js') }}?v={{ app_version }}"></script>{% endblock %}

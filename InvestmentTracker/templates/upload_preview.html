@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="pagehead"><div><h1>Check before saving</h1><div class="sub">{{ p['filename'] }}</div></div></div>
+
+<div class="grid kpis">
+  <div class="card kpi accent"><div class="label">As-on date</div><div class="value" style="font-size:21px">{{ p['as_on']|dmy if p['as_on'] else '— missing —' }}</div><div class="delta muted small">Date in file: {{ p['prepared_on']|dmy }}</div></div>
+  <div class="card kpi accent"><div class="label">Holdings read</div><div class="value">{{ p['rows']|length }}</div><div class="delta muted small">{{ p['errors']|length }} errors · {{ p['warnings']|length }} warnings</div></div>
+  <div class="card kpi accent2"><div class="label">Total (active)</div><div class="value" style="font-size:21px">₹ {{ summ['total']|inr(0) }}</div><div class="delta muted small">Closed items excluded</div></div>
+</div>
+
+{% if p['errors'] %}
+<div class="flash error"><b>{{ p['errors']|length }} error(s) must be fixed in the Excel before this can be saved.</b>
+  <ul class="issues">{% for e in p['errors'] %}<li>{{ e }}</li>{% endfor %}</ul></div>
+{% endif %}
+{% if p['warnings'] %}
+<div class="flash warn"><b>{{ p['warnings']|length }} warning(s) – please review (you can still save).</b>
+  <ul class="issues">{% for e in p['warnings'] %}<li>{{ e }}</li>{% endfor %}</ul></div>
+{% endif %}
+{% if p['new_banks'] or p['new_funds'] %}
+<div class="flash ok"><b>New names will be added to Masters automatically:</b>
+  {% if p['new_banks'] %}<div>Banks / Institutions: {{ p['new_banks']|join(', ') }}</div>{% endif %}
+  {% if p['new_funds'] %}<div>Funds / Securities: {{ p['new_funds']|join(', ') }}</div>{% endif %}</div>
+{% endif %}
+
+{% if p['rows'] %}
+<div class="grid cols-2" style="margin-bottom:14px">
+  <div class="card"><h2>Totals by entity</h2>
+    <div class="tablewrap"><table class="t"><thead><tr><th>Entity</th><th class="r">This file</th>{% if variance %}<th class="r">Previous ({{ p['prev_date']|dmy }})</th><th class="r">Change</th>{% endif %}</tr></thead><tbody>
+    {% if variance %}
+      {% for v in variance %}<tr><td>{{ v['entity'] }}</td><td class="num">{{ v['new']|inr(0) }}</td><td class="num">{{ v['prev']|inr(0) }}</td>
+        <td class="num">{% if v['pct'] is none %}–{% else %}<span class="{{ 'pos' if v['pct']>=0 else 'neg' }}">{{ '%+.1f'|format(v['pct']) }}%</span>{% endif %}</td></tr>{% endfor %}
+    {% else %}
+      {% for k, v in summ['by_entity'].items() %}<tr><td>{{ k }}</td><td class="num">{{ v|inr(0) }}</td></tr>{% endfor %}
+    {% endif %}
+    <tr class="total"><td>Total</td><td class="num">{{ summ['total']|inr(0) }}</td>{% if variance %}<td></td><td></td>{% endif %}</tr>
+    </tbody></table></div></div>
+  <div class="card"><h2>Totals by group</h2>
+    <div class="tablewrap"><table class="t"><thead><tr><th>Group</th><th class="r">This file</th></tr></thead><tbody>
+    {% for k, v in summ['by_group'].items() %}<tr><td>{{ k }}</td><td class="num">{{ v|inr(0) }}</td></tr>{% endfor %}
+    </tbody></table></div></div>
+</div>
+{% endif %}
+
+{% if not p['errors'] %}
+<div class="card" style="margin-bottom:14px">
+  <form method="post" action="{{ url_for('uploads_confirm') }}" class="js-once">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="token" value="{{ token }}">
+    {% if exists %}
+    <div class="flash error"><b>Data for {{ p['as_on']|dmy }} already exists</b> (uploaded {{ exists['uploaded_at']|dmytime }} by {{ exists['uploaded_by'] }}, {{ exists['row_count'] }} holdings, ₹ {{ exists['total_value']|inr(0) }}).
+      Saving will <b>replace</b> it. A backup copy is taken first.
+      <label style="display:flex;gap:8px;align-items:center;margin-top:8px"><input type="checkbox" name="replace" value="1" id="replaceBox" style="width:auto;min-height:0"> Yes, replace the existing data for this date</label></div>
+    {% endif %}
+    <div class="field" style="max-width:520px;margin-bottom:12px"><label>Note (optional)</label><input type="text" name="note" maxlength="200" placeholder="e.g. Includes revised PMS statement"></div>
+    <button class="btn" id="confirmBtn" type="submit">✔ Save data for {{ p['as_on']|dmy }}</button>
+    <a class="btn secondary" href="{{ url_for('uploads_page') }}">Cancel</a>
+  </form>
+</div>
+{% else %}
+<a class="btn" href="{{ url_for('uploads_page') }}">← Back to upload</a>
+{% endif %}
+
+{% if p['rows'] %}
+<div class="card"><h2>Rows read from the file</h2>
+<div class="tablewrap" style="max-height:60vh"><table class="t"><thead><tr><th>Excel row</th><th>Entity</th><th>Type</th><th>Bank</th><th>Fund / Security</th><th>Account no.</th><th class="r">Invested</th><th class="r">Current value</th><th>Maturity</th><th>Status</th></tr></thead><tbody>
+{% for r in p['rows'] %}<tr><td>{{ r['excel_row'] }}</td><td>{{ r['entity'] }}</td><td>{{ r['type'] }}</td><td>{{ r['bank'] or '–' }}</td><td>{{ r['fund'] or '–' }}</td><td>{{ r['account_no'] or '–' }}</td>
+<td class="num">{{ r['invested_amount']|inr(0) if r['invested_amount'] is not none else '–' }}</td><td class="num">{{ r['current_value']|inr(2) }}</td><td class="nowrap">{{ r['maturity_date']|dmy if r['maturity_date'] else '–' }}</td><td>{{ r['status'] }}</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endif %}
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/forms.js') }}?v={{ app_version }}"></script>{% endblock %}

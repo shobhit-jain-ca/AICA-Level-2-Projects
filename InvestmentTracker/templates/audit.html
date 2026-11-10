@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="pagehead"><div><h1>Activity Log</h1><div class="sub">Last 500 events – logins, uploads, deletions and master changes.</div></div></div>
+<div class="tablewrap"><table class="t">
+<thead><tr><th>When</th><th>User</th><th>Action</th><th>Details</th><th>IP</th></tr></thead>
+<tbody>
+{% for r in rows %}
+<tr><td class="nowrap">{{ r['at']|dmytime }}</td><td>{{ r['username'] or '-' }}</td>
+<td>{% if 'failed' in r['action'] %}<span class="badge red">{{ r['action'] }}</span>{% else %}<span class="badge">{{ r['action'] }}</span>{% endif %}</td>
+<td>{{ r['detail'] or '' }}</td><td class="muted">{{ r['ip'] }}</td></tr>
+{% endfor %}
+</tbody></table></div>
+{% endblock %}

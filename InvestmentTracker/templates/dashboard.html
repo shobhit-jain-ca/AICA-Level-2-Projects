@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="root">
+  <div class="pagehead">
+    <div><h1>Dashboard</h1><div class="sub" id="subline">Loading…</div></div>
+    <div class="spacer"></div>
+    <div class="field" style="min-width:170px"><label for="asOn">As on</label><select id="asOn"></select></div>
+    <div id="unitToggle"></div>
+    <div class="exportgrp" id="exports" data-path="/export/dashboard"><a class="btn secondary sm" data-export="xlsx" href="#">⬇ Excel</a><a class="btn secondary sm" data-export="pdf" href="#">⬇ PDF</a></div>
+  </div>
+  <div class="filterbar" id="filters"></div>
+  <div id="body" style="display:none">
+    <div class="grid kpis" id="kpis"></div>
+
+    <div class="grid cols-2" style="margin-bottom:14px">
+      <div class="card"><h2>Where the money is (by group)</h2>
+        <div class="chartbox"><canvas id="cAlloc" role="img" aria-label="Allocation by investment group"></canvas></div>
+        <div class="legend" id="lAlloc"></div></div>
+      <div class="card"><h2>Total investments over time</h2>
+        <div class="chartbox"><canvas id="cTrend" role="img" aria-label="Total investments over time"></canvas></div>
+        <div class="legend"><span><i style="background:#2a78d6"></i>Total investments</span></div></div>
+    </div>
+
+    <div class="grid cols-2" style="margin-bottom:14px">
+      <div class="card"><h2>Group mix over time</h2>
+        <div class="chartbox"><canvas id="cStack" role="img" aria-label="Investment group mix over time"></canvas></div>
+        <div class="legend" id="lStack"></div></div>
+      <div class="card"><h2>By entity</h2>
+        <div class="chartbox"><canvas id="cEntity" role="img" aria-label="Investments by entity"></canvas></div>
+        <div class="legend" id="lEntity"></div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <h2>Entity-wise summary <span class="muted small" id="matrixDate"></span></h2>
+      <div class="tablewrap"><table class="t" id="matrix"></table></div>
+    </div>
+
+    <div class="grid cols-2">
+      <div class="card"><h2>Movement by investment type</h2>
+        <div class="tablewrap"><table class="t" id="typeTable"></table></div></div>
+      <div class="card"><h2>Top 10 holdings</h2>
+        <div class="tablewrap"><table class="t" id="topTable"></table></div></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/dashboard.js') }}?v={{ app_version }}"></script>{% endblock %}

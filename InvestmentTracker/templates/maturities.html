@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="root">
+  <div class="pagehead">
+    <div><h1>Maturities</h1><div class="sub" id="subline">FDs, bonds and other holdings with a maturity date.</div></div>
+    <div class="spacer"></div>
+    <div class="field" style="min-width:170px"><label for="asOn">Position as on</label><select id="asOn"></select></div>
+    <div class="field" style="min-width:170px"><label for="days">Maturing within</label>
+      <select id="days"><option value="30">Next 30 days</option><option value="60">Next 60 days</option><option value="90" selected>Next 90 days</option><option value="180">Next 6 months</option><option value="365">Next 12 months</option><option value="1095">Next 3 years</option><option value="36500">All future</option></select></div>
+    <div id="unitToggle"></div>
+    <div class="exportgrp" id="exports" data-path="/export/maturities"><a class="btn secondary sm" data-export="xlsx" href="#">⬇ Excel</a><a class="btn secondary sm" data-export="pdf" href="#">⬇ PDF</a></div>
+  </div>
+  <div class="filterbar" id="filters"></div>
+  <div id="body" style="display:none">
+    <div id="note"></div>
+    <div class="grid cols-2" style="margin-bottom:14px">
+      <div class="card"><h2>Maturity ladder (value maturing each month)</h2><div class="chartbox"><canvas id="cLadder" role="img" aria-label="Maturity ladder"></canvas></div>
+        <div class="legend"><span><i style="background:#2a78d6"></i>Upcoming</span><span><i style="background:#e34948"></i>Already past maturity date</span></div></div>
+      <div class="card"><h2>Summary</h2><div id="sum"></div></div>
+    </div>
+    <div class="tablewrap"><table class="t" id="tbl"></table></div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/maturities.js') }}?v={{ app_version }}"></script>{% endblock %}

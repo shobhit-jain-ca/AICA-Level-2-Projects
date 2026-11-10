@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="root">
+  <div class="pagehead">
+    <div><h1>Search</h1><div class="sub">Find any investment by bank / institution, account or folio number, fund, investment type, entity, nominee or any other reference.</div></div>
+    <div class="spacer"></div>
+    <div id="unitToggle"></div>
+    <div class="exportgrp" id="exports" data-path="/export/search"><a class="btn secondary sm" data-export="xlsx" href="#">⬇ Excel</a><a class="btn secondary sm" data-export="pdf" href="#">⬇ PDF</a></div>
+  </div>
+
+  <form class="searchbox" id="sform" autocomplete="off">
+    <div class="field big"><label for="q">Search for</label><input type="search" id="q" placeholder="e.g. HDFC, 50300…, Mutual Fund, Narayan, BBB fixed deposit" autofocus></div>
+    <div class="field" style="min-width:190px;flex:0 0 190px"><label for="asOn">Look in</label><select id="asOn"></select></div>
+    <div class="field" style="min-width:120px;flex:0"><label>&nbsp;</label><label style="display:flex;gap:6px;align-items:center;text-transform:none;letter-spacing:0;font-weight:500;color:var(--ink);margin-top:8px;white-space:nowrap"><input type="checkbox" id="closed" style="width:auto;min-height:0"> Include closed</label></div>
+    <div class="field" style="flex:0"><label>&nbsp;</label><button class="btn" type="submit">Search</button></div>
+  </form>
+
+  <div id="out"></div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/search.js') }}?v={{ app_version }}"></script>{% endblock %}

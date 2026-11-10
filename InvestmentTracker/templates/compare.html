@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="root">
+  <div class="pagehead">
+    <div><h1>Compare Periods</h1><div class="sub">Pick the periods and what to compare – total investments, or any specific investment such as Mutual Funds.</div></div>
+    <div class="spacer"></div>
+    <div id="unitToggle"></div>
+  </div>
+
+  <div class="filterbar" id="topControls">
+    <div class="field" id="fPeriods" style="min-width:210px"></div>
+    <div class="field"><label>Quick select</label>
+      <div class="seg" id="quick"><button data-n="2">Last 2</button><button data-n="3">Last 3</button><button data-n="6">Last 6</button><button data-n="12">Last 12</button><button data-n="0">All</button></div></div>
+    <div class="field"><label for="by">Compare by</label>
+      <select id="by">
+        <option value="type">Investment Type</option>
+        <option value="group">Investment Group</option>
+        <option value="entity">Entity</option>
+        <option value="bank">Bank / Institution</option>
+        <option value="fund">Fund / Security</option>
+        <option value="holding">Individual Holding</option>
+      </select></div>
+  </div>
+  <div class="filterbar" id="filters" style="margin-top:-6px"></div>
+
+  <div id="body" style="display:none">
+    <div id="msg"></div>
+    <div class="grid kpis" id="kpis"></div>
+    <div class="grid cols-2" style="margin-bottom:14px">
+      <div class="card"><h2 id="t1">Period-wise comparison</h2><div class="chartbox tall"><canvas id="cBars" role="img" aria-label="Comparison across periods"></canvas></div><div class="legend" id="l1"></div></div>
+      <div class="card"><h2 id="t2">Trend</h2><div class="chartbox tall"><canvas id="cLines" role="img" aria-label="Trend across periods"></canvas></div><div class="legend" id="l2"></div></div>
+    </div>
+    <div class="card" style="margin-bottom:14px"><h2>Change from first to last period</h2>
+      <div class="chartbox tall" id="chgBox"><canvas id="cChange" role="img" aria-label="Change between first and last period"></canvas></div>
+      <div class="legend"><span><i style="background:#2a78d6"></i>Increase</span><span><i style="background:#e34948"></i>Decrease</span></div></div>
+    <div class="card">
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:10px">
+        <h2 style="margin:0" id="tblTitle">Detailed table</h2><div class="spacer"></div>
+        <label class="small" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="mom" style="width:auto;min-height:0"> Show change vs previous period</label>
+        <div class="exportgrp" id="exports" data-path="/export/compare"><a class="btn secondary sm" data-export="xlsx" href="#">⬇ Excel</a><a class="btn secondary sm" data-export="pdf" href="#">⬇ PDF</a></div>
+      </div>
+      <div class="tablewrap"><table class="t" id="tbl"></table></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/compare.js') }}?v={{ app_version }}"></script>{% endblock %}

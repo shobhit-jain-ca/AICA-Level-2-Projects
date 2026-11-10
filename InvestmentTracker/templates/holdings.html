@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="root">
+  <div class="pagehead">
+    <div><h1>All Holdings</h1><div class="sub" id="subline">Complete register for a chosen date. Click a row for full details.</div></div>
+    <div class="spacer"></div>
+    <div class="field" style="min-width:170px"><label for="asOn">As on</label><select id="asOn"></select></div>
+    <div id="unitToggle"></div>
+  </div>
+  <div class="filterbar" id="filters">
+    <div class="field" style="min-width:220px"><label for="q">Search</label><input type="search" id="q" placeholder="Name, account no., remarks…"></div>
+    <div class="field" style="min-width:120px;flex:0"><label>&nbsp;</label><label style="display:flex;gap:6px;align-items:center;text-transform:none;letter-spacing:0;font-weight:500;color:var(--ink);margin-top:8px"><input type="checkbox" id="closed" style="width:auto;min-height:0"> Show closed</label></div>
+  </div>
+  <div id="body" style="display:none">
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+      <div class="muted" id="count"></div><div class="spacer"></div>
+      <div class="exportgrp" id="exports" data-path="/export/holdings"><a class="btn secondary sm" data-export="xlsx" href="#">⬇ Excel</a><a class="btn secondary sm" data-export="pdf" href="#">⬇ PDF</a></div>
+    </div>
+    <div class="tablewrap" style="max-height:72vh"><table class="t" id="tbl"></table></div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/holdings.js') }}?v={{ app_version }}"></script>{% endblock %}
